@@ -1,4 +1,4 @@
-package net.runner.relley
+package net.runner.relley.Screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,13 +26,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import compose.icons.FontAwesomeIcons
 import compose.icons.fontawesomeicons.Brands
 import compose.icons.fontawesomeicons.brands.Github
+import net.runner.relley.R
 import net.runner.relley.fn.Redirect
 
 @Composable
-fun Login() {
+fun Login(navController: NavController) {
     val context = LocalContext.current
     Box(modifier = Modifier
         .fillMaxSize()
