@@ -33,6 +33,9 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
     private val _accessToken = MutableLiveData<String?>()
     val accessToken: LiveData<String?> get() = _accessToken
 
+    private val _profile = MutableLiveData<String?>()
+    val profile: LiveData<String?> get() = _profile
+
     init {
         val token = getStoredAccessToken(context)
         if(token != null){
@@ -64,10 +67,14 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.body?.string()
                 if (response.isSuccessful) {
-                    val accessToken = JSONObject(responseBody).getString("access_token")
-                    Log.d("auth","accessToken:$accessToken")
-                    _accessToken.postValue(accessToken)
-                }
+                    try {
+
+                        val accessToken = JSONObject(responseBody).getString("access_token")
+                        Log.d("auth","accessToken:$accessToken")
+                        _accessToken.postValue(accessToken)
+                    }catch (e: Exception) {
+                        Log.e("AccessTokenError","Error getting access token", e)
+                }}
             }
         })
     }
@@ -93,6 +100,7 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
                         } else {
                             _fetchedData.postValue(emptyList())
                         }
+
                     } catch (e: Exception) {
                         Log.e("RepoFetchError","Error fetching repositories", e)
                         _fetchedData.postValue(emptyList())
@@ -101,4 +109,35 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+    fun profile(){
+        accessToken.observeForever { token ->
+            if (!token.isNullOrEmpty()) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    try {
+                        val client1 = OkHttpClient()
+                        val request1 = Request.Builder()
+                            .url("https://api.github.com/user")
+                            .header("Authorization", "Bearer $token")
+                            .build()
+
+                        val response1 = client1.newCall(request1).execute()
+                        if (response1.isSuccessful) {
+                            val responseBody1 = response1.body?.string()
+                            Log.d("auth", "user:$responseBody1")
+                            val jsonObject = JSONObject(responseBody1)
+                            val avatarUrl = jsonObject.getString("avatar_url")
+                            Log.d("auth", "avatarUrl:$avatarUrl")
+                            _profile.postValue(avatarUrl)
+                        } else {
+                            _profile.postValue("")
+
+                        }
+                    } catch (e: Exception) {
+                        _profile.postValue("")
+
+                    }
+                }
+            }
+        }}
 }
+
