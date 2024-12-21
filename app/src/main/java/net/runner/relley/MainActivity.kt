@@ -5,22 +5,23 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import net.runner.relley.Data.saveToken
+import net.runner.relley.Screens.Intermediate
+import net.runner.relley.Screens.Login
 import net.runner.relley.ViewModels.RepoViewModel
+import net.runner.relley.Screens.Main
+import net.runner.relley.fn.Repository
 import net.runner.relley.ui.theme.RelleyTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var repoViewModel: RepoViewModel
+    private var repository : List<Repository>? = null
+    private var avatar_url : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,15 +30,19 @@ class MainActivity : ComponentActivity() {
             if (!token.isNullOrEmpty()) {
                 saveToken(token, this)
                 repoViewModel.fetchRepositories()
+                repoViewModel.profile()
             }
         })
         repoViewModel.fetchedData.observe(this, Observer { repositories ->
             if (repositories.isEmpty()) {
                 //empty
             } else {
-                //show repositories in UI
+                repository = repositories
 
             }
+        })
+        repoViewModel.profile.observe(this, Observer { url ->
+            avatar_url =url
         })
 
         val uri = intent?.data
@@ -49,25 +54,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RelleyTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val fetchedData by repoViewModel.fetchedData.observeAsState(emptyList())
-                    Log.d("fetchedData", fetchedData.toString())
-                    if(fetchedData.isEmpty()){
-                        Login()
-                    }else{
-
-                    }
-                }
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = "Main"
+                    startDestination = "Intermediate"
                 ) {
+                    composable(route = "InterMediate") {
+                        Intermediate(navController)
+                    }
                     composable(route = "Main") {
-//                        Main()
+                        Main(navController,repository,avatar_url)
                     }
                     composable(route="Login") {
-                        Login()
+                        Login(navController)
                     }
                 }
             }
