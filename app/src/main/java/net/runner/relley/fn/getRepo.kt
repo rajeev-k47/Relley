@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Repository(
     val id: Long?=null,
     val name: String?=null,
-    val fullName: String?=null,
+    val full_name: String?=null,
     val private: Boolean?=null,
     val owner: Owner?=null,
     val htmlUrl: String?=null,
@@ -18,5 +18,5 @@ data class Repository(
 data class Owner(
     val login: String?=null,
     val id: Long?=null,
-    val avatarUrl: String?=null
+    val avatar_url: String?=null
 )
