@@ -75,6 +75,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.navigation.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -84,4 +86,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("br.com.devsrsouza.compose.icons:font-awesome:1.1.1")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio) // CIO engine for network operations
+    implementation(libs.ktor.client.json) // JSON feature
+    implementation(libs.ktor.client.serialization) // Serialization
+
+    implementation(libs.gson)
 }
