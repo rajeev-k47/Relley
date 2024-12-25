@@ -1,20 +1,20 @@
 package net.runner.relley.ViewModels
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.runner.relley.BuildConfig
 import net.runner.relley.Data.getStoredAccessToken
-import net.runner.relley.fn.Repository
+import net.runner.relley.Data.saveProfile
+import net.runner.relley.Repository.Repository
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -39,7 +39,7 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val token = getStoredAccessToken(context)
         if(token != null){
-
+            Log.d("auth","toekn$token")
             _accessToken.postValue(token)
         }
     }
@@ -68,9 +68,7 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
                 val responseBody = response.body?.string()
                 if (response.isSuccessful) {
                     try {
-
                         val accessToken = JSONObject(responseBody).getString("access_token")
-                        Log.d("auth","accessToken:$accessToken")
                         _accessToken.postValue(accessToken)
                     }catch (e: Exception) {
                         Log.e("AccessTokenError","Error getting access token", e)
@@ -95,10 +93,15 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
                             val responseBody = response.body?.string()
                             val listType = object : TypeToken<List<Repository>>() {}.type
                             val repositories = Gson().fromJson<List<Repository>>(responseBody, listType)
-                            _fetchedData.postValue(repositories)
+                            withContext(Dispatchers.Main) {
+                                _fetchedData.value = repositories
+//                                _fetchedData.postValue(repositories)
+                            }
                             Log.d("auth","repositories:$repositories")
                         } else {
                             _fetchedData.postValue(emptyList())
+                            Log.d("auth","repositories:${response.body?.string()}")
+
                         }
 
                     } catch (e: Exception) {
@@ -126,8 +129,13 @@ class RepoViewModel(application: Application) : AndroidViewModel(application) {
                             Log.d("auth", "user:$responseBody1")
                             val jsonObject = JSONObject(responseBody1)
                             val avatarUrl = jsonObject.getString("avatar_url")
-                            Log.d("auth", "avatarUrl:$avatarUrl")
-                            _profile.postValue(avatarUrl)
+                            saveProfile(responseBody1!!,context)
+                            withContext(Dispatchers.Main){
+
+                                _profile.value=avatarUrl
+                            }
+
+//                            _profile.postValue(avatarUrl)
                         } else {
                             _profile.postValue("")
 
