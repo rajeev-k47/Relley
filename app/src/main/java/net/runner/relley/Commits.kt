@@ -1,4 +1,4 @@
-package net.runner.relley.Repository
+package net.runner.relley
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable

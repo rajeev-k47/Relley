@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="net.runner.relley" />
+                  <option name="mobileSdkAppId" value="1:81333411098:android:68c5682472845c6e2420a3" />
+                  <option name="projectId" value="relley" />
+                  <option name="projectNumber" value="81333411098" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

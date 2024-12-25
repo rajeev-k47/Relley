@@ -99,6 +99,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.bottombar)
         implementation(libs.coil.compose)
+    implementation ("com.github.hitanshu-dhawan:CircularProgressBar-Compose:1.0.0-rc01")
+
 
 
 }
