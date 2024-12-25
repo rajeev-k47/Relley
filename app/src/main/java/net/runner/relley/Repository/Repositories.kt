@@ -1,6 +1,6 @@
 package net.runner.relley.Repository
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.google.gson.Gson
 import net.runner.relley.R
-import net.runner.relley.fn.Repository
 import net.runner.relley.ui.theme.BottomNavigationIconUnselected
 
 @Composable
-fun Repositories(navController: NavController,repository: List<Repository>?=null,innerpadding:PaddingValues){
+fun Repositories(navController: NavController, repository: List<Repository>?=null, innerpadding:PaddingValues){
 
     LazyColumn (
         modifier = Modifier
@@ -45,26 +45,29 @@ fun Repositories(navController: NavController,repository: List<Repository>?=null
     ){
         repository?.forEach {
             item {
-                RepositoryItem(navController = navController, repository = it)
+                RepositoryItem(navController = navController, repo = it)
             }
         }
     }
 }
 @Composable
-fun RepositoryItem(navController: NavController, repository: Repository){
+fun RepositoryItem(navController: NavController, repo: Repository){
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().clickable {
+            navController.navigate("redirectApp/${repo.id}")
+
+        }
     ){
         AsyncImage(
-            model = repository.owner!!.avatar_url,
+            model = repo.owner!!.avatar_url,
             contentDescription = "avatar",
-            placeholder = rememberAsyncImagePainter(R.drawable.ic_launcher_foreground),
-            error = rememberAsyncImagePainter(R.drawable.ic_launcher_foreground),
+            placeholder = rememberAsyncImagePainter(R.drawable.android),
+            error = rememberAsyncImagePainter(R.drawable.android),
             modifier = Modifier
                 .padding(10.dp)
-                .size(60.dp)
+                .size(58.dp)
                 .clip(RoundedCornerShape(15.dp))
         )
 
@@ -83,14 +86,14 @@ fun RepositoryItem(navController: NavController, repository: Repository){
                         horizontalArrangement = Arrangement.Center
                     ){
 
-                        Text(text = repository.name!!, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, overflow = TextOverflow.Ellipsis, maxLines = 1, modifier = Modifier
+                        Text(text = repo.name!!, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold, overflow = TextOverflow.Ellipsis, maxLines = 1, modifier = Modifier
                             .padding(end = 5.dp))
-                        if(repository.private!!){
+                        if(repo.private!!){
                             Icon(imageVector = Icons.Default.Lock , contentDescription = "Private", tint = Color.LightGray, modifier = Modifier
                                 .padding(start = 5.dp)
                                 .size(15.dp))
                         }
-                        if(repository.fork!!){
+                        if(repo.fork!!){
                             Icon(painter = painterResource(id = R.drawable.fork) , contentDescription = "Fork", tint = Color.LightGray, modifier = Modifier
                                 .padding(start = 5.dp)
                                 .size(15.dp))
@@ -98,16 +101,17 @@ fun RepositoryItem(navController: NavController, repository: Repository){
                         Spacer(modifier = Modifier.size(10.dp))
                     }
 
-                    Text(text = "@${repository.owner!!.login!!}", color =BottomNavigationIconUnselected, fontSize = 15.sp)
+                    Text(text = "@${repo.owner!!.login!!}", color =BottomNavigationIconUnselected, fontSize = 15.sp)
                 }
 
             }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+            },
             modifier = Modifier.padding(end = 14.dp),
             shape = RoundedCornerShape(10.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = BottomNavigationIconUnselected.copy(alpha = 0.1f)),
+            colors = ButtonDefaults.buttonColors(containerColor = BottomNavigationIconUnselected.copy(alpha = 0.1f))
         ) {
             Text(text = "View", color = BottomNavigationIconUnselected, fontWeight =  FontWeight.Bold)
         }
